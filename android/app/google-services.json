@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1034942262028",
+    "project_id": "todoapp-18d27",
+    "storage_bucket": "todoapp-18d27.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1034942262028:android:6c97c9b97b3fc58a693729",
+        "android_client_info": {
+          "package_name": "lk.migara.todo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAtkd83PfFGAdYePsZxGwGGmtDsnej1iJA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
