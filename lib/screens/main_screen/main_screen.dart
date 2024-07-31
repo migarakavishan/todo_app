@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:todo_app/todo.dart';
+import 'package:provider/provider.dart';
+import 'package:todo_app/controllers/auth_controller.dart';
+import 'package:todo_app/providers/auth_provider.dart';
+import 'package:todo_app/providers/todo_provider.dart';
+import 'package:todo_app/screens/main_screen/widgets/todo_item.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -9,53 +13,63 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  final List<ToDo> _todos = [];
   final TextEditingController _textController = TextEditingController();
-
-  void _addToDo() {
-    setState(() {
-      _todos.add(ToDo(
-        title: _textController.text,
-      ));
-      _textController.clear();
-    });
-  }
-
-  void _toggleToDoStatus(int index) {
-    setState(() {
-      _todos[index].isDone = !_todos[index].isDone;
-    });
-  }
-
-  void _removeToDoItem(int index) {
-    setState(() {
-      _todos.removeAt(index);
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.sizeOf(context);
-    final undoneTodos = _todos.where((todo) => !todo.isDone).toList();
-    final doneTodos = _todos.where((todo) => todo.isDone).toList();
+    final provider = Provider.of<ToDoProvider>(context);
+    final undoneTodos = provider.todos.where((todo) => !todo.isDone).toList();
+    final doneTodos = provider.todos.where((todo) => todo.isDone).toList();
 
     return Scaffold(
       backgroundColor: Colors.blue,
       body: SafeArea(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
               height: 80,
               width: size.width,
               decoration: const BoxDecoration(color: Colors.blue),
-              child: const Center(
-                  child: Text(
-                "ToDoList",
-                style: TextStyle(
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Row(
+                  children: [
+                    const Center(
+                        child: Text(
+                      "ToDoList",
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 30,
+                          fontWeight: FontWeight.bold),
+                    )),
+                    const Spacer(),
+                    GestureDetector(
+                      onTap: () {
+                        AuthController().signOutUser();
+                      },
+                      child: const CircleAvatar(
+                        backgroundColor: Colors.white,
+                        child: Icon(
+                          Icons.exit_to_app,
+                          color: Colors.blue,
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(15.0),
+              child: Text(
+                "Hello ${Provider.of<AuthProvider>(context).userModel!.name}",
+                style: const TextStyle(
                     color: Colors.white,
-                    fontSize: 30,
+                    fontSize: 20,
                     fontWeight: FontWeight.bold),
-              )),
+              ),
             ),
             Expanded(
               child: ListView.builder(
@@ -78,10 +92,10 @@ class _MainScreenState extends State<MainScreen> {
                     final todoIndex = index - 1;
                     return ToDoItem(
                       todo: undoneTodos[todoIndex],
-                      onToggle: () => _toggleToDoStatus(
-                          _todos.indexOf(undoneTodos[todoIndex])),
-                      onDelete: () => _removeToDoItem(
-                          _todos.indexOf(undoneTodos[todoIndex])),
+                      onToggle: () => provider.toggleToDoStatus(
+                          provider.todos.indexOf(undoneTodos[todoIndex])),
+                      onDelete: () => provider.removeToDoItem(
+                          provider.todos.indexOf(undoneTodos[todoIndex])),
                     );
                   } else if (index == undoneTodos.length + 1) {
                     return Padding(
@@ -98,10 +112,10 @@ class _MainScreenState extends State<MainScreen> {
                     final todoIndex = index - undoneTodos.length - 2;
                     return ToDoItem(
                       todo: doneTodos[todoIndex],
-                      onToggle: () => _toggleToDoStatus(
-                          _todos.indexOf(doneTodos[todoIndex])),
-                      onDelete: () =>
-                          _removeToDoItem(_todos.indexOf(doneTodos[todoIndex])),
+                      onToggle: () => provider.toggleToDoStatus(
+                          provider.todos.indexOf(doneTodos[todoIndex])),
+                      onDelete: () => provider.removeToDoItem(
+                          provider.todos.indexOf(doneTodos[todoIndex])),
                     );
                   }
                 },
@@ -128,7 +142,10 @@ class _MainScreenState extends State<MainScreen> {
                   const SizedBox(width: 8),
                   FloatingActionButton(
                     shape: const CircleBorder(),
-                    onPressed: _addToDo,
+                    onPressed: () {
+                      provider.addToDo(_textController.text);
+                      _textController.clear();
+                    },
                     backgroundColor: Colors.white,
                     child: const Icon(
                       Icons.add,
@@ -139,49 +156,6 @@ class _MainScreenState extends State<MainScreen> {
               ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class ToDoItem extends StatelessWidget {
-  final ToDo todo;
-  final VoidCallback onToggle;
-  final VoidCallback onDelete;
-
-  const ToDoItem({
-    super.key,
-    required this.todo,
-    required this.onToggle,
-    required this.onDelete,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(15.0),
-      ),
-      child: ListTile(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15.0),
-        ),
-        tileColor: Colors.white,
-        title: Text(
-          todo.title,
-          style: TextStyle(
-            decoration: todo.isDone ? TextDecoration.lineThrough : null,
-          ),
-        ),
-        leading: Checkbox(
-          value: todo.isDone,
-          onChanged: (value) => onToggle(),
-          shape: const CircleBorder(),
-        ),
-        trailing: IconButton(
-          icon: const Icon(Icons.delete, color: Colors.red),
-          onPressed: onDelete,
         ),
       ),
     );

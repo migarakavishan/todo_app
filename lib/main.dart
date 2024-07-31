@@ -1,14 +1,33 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:todo_app/firebase_options.dart';
-import 'package:todo_app/screens/splash_screen.dart';
+import 'package:todo_app/providers/auth_provider.dart';
+import 'package:todo_app/providers/signin_provider.dart';
+import 'package:todo_app/providers/signup_provider.dart';
+import 'package:todo_app/providers/todo_provider.dart';
+import 'package:todo_app/screens/splash_screen/splash_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(const MyApp());
+  runApp(MultiProvider(
+    providers: [
+      ChangeNotifierProvider(create: (context) => ToDoProvider()),
+      ChangeNotifierProvider(
+        create: (context) => SignupProvider(),
+      ),
+      ChangeNotifierProvider(
+        create: (context) => SigninProvider(),
+      ),
+      ChangeNotifierProvider(
+        create: (context) => AuthProvider(),
+      ),
+    ],
+    child: const MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {
