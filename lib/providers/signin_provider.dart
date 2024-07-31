@@ -15,8 +15,18 @@ class SigninProvider extends ChangeNotifier {
         _passwordController.text.trim().isEmpty) {
       Logger().e("Invalid data");
     } else {
-      authController.signInWithPassword(
-          email: _emailController.text, password: _passwordController.text);
+      authController
+          .signInWithPassword(
+              email: _emailController.text, password: _passwordController.text)
+          .then((value) {
+        clearTextFiels();
+      });
     }
+  }
+
+  void clearTextFiels() {
+    _emailController.clear();
+    _passwordController.clear();
+    notifyListeners();
   }
 }

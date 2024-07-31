@@ -31,6 +31,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
                 const SizedBox(height: 20),
                 TextField(
+                  controller: value.nameController,
                   decoration: InputDecoration(
                     filled: true,
                     fillColor: Colors.white,

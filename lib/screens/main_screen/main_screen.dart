@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:todo_app/controllers/auth_controller.dart';
+import 'package:todo_app/providers/auth_provider.dart';
 import 'package:todo_app/providers/todo_provider.dart';
 import 'package:todo_app/screens/main_screen/widgets/todo_item.dart';
 
@@ -25,6 +26,7 @@ class _MainScreenState extends State<MainScreen> {
       backgroundColor: Colors.blue,
       body: SafeArea(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
               height: 80,
@@ -57,6 +59,16 @@ class _MainScreenState extends State<MainScreen> {
                     )
                   ],
                 ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(15.0),
+              child: Text(
+                "Hello ${Provider.of<AuthProvider>(context).userModel!.name}",
+                style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold),
               ),
             ),
             Expanded(

@@ -1,12 +1,8 @@
 import 'dart:async';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:logger/logger.dart';
-import 'package:todo_app/screens/auth_screen/login.dart';
-import 'package:todo_app/screens/main_screen/main_screen.dart';
-import 'package:todo_app/utils/navigation/custom_navigation.dart';
+import 'package:todo_app/controllers/auth_controller.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -20,15 +16,7 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     Future.delayed(const Duration(seconds: 3), () {
-      FirebaseAuth.instance.authStateChanges().listen((User? user) {
-        if (user == null) {
-          Logger().f('User is currently signed out!');
-          CustomNavigation.nextPage(context, const LoginScreen());
-        } else {
-          Logger().e('User is signed in!');
-          CustomNavigation.nextPage(context, const MainScreen());
-        }
-      });
+      AuthController().listenAuthState(context);
     });
   }
 
