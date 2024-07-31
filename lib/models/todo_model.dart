@@ -1,9 +1,9 @@
 // lib/todo.dart
-class ToDo {
+class ToDoModel {
   String title;
   bool isDone;
 
-  ToDo({
+  ToDoModel({
     required this.title,
     this.isDone = false,
   });
