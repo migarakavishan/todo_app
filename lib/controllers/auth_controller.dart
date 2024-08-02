@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
+import 'package:todo_app/models/todo_model.dart';
 import 'package:todo_app/models/user_model.dart';
 import 'package:todo_app/providers/auth_provider.dart' as auth_provider;
 import 'package:todo_app/screens/auth_screen/login.dart';
@@ -100,5 +101,40 @@ class AuthController {
     }
   }
 
-  
+  Future<void> addTodoItem(ToDoModel todo) async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      try {
+        await users.doc(user.uid).collection('todos').add(todo.toJson());
+        Logger().e("Todo added successfully.");
+      } catch (e) {
+        Logger().e("Failed to add todo: $e");
+      }
+    }
+  }
+
+  Future<void> updateTodoStatus(String todoId, bool isDone) async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      try {
+        await users.doc(user.uid).collection('todos').doc(todoId).update({'isDone': isDone});
+        Logger().e("Todo status updated.");
+      } catch (e) {
+       Logger().e("Failed to update todo status: $e");
+      }
+    }
+  }
+
+  Future<void> deleteTodoItem(String todoId) async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      try {
+        await users.doc(user.uid).collection('todos').doc(todoId).delete();
+        Logger().e("Todo deleted successfully.");
+      } catch (e) {
+        Logger().e("Failed to delete todo: $e");
+      }
+    }
+  }
 }
+
